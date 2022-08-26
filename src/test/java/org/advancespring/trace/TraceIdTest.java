@@ -24,6 +24,7 @@ class TraceIdTest {
 
         assertThat(levelOneTrace.getLevel()).isEqualTo(levelZeroTrace.getLevel()+1);
         assertThat(levelOneTrace.getId()).hasSize(8);
+        assertThat(levelOneTrace.getId()).isEqualTo(levelZeroTrace.getId());
     }
 
     @Test
@@ -34,5 +35,6 @@ class TraceIdTest {
 
         assertThat(levelMinusTrace.getLevel()).isEqualTo(levelZeroTrace.getLevel()-1);
         assertThat(levelMinusTrace.getId()).hasSize(8);
+        assertThat(levelMinusTrace.getId()).isEqualTo(levelZeroTrace.getId());
     }
 }
