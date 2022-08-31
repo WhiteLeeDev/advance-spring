@@ -9,16 +9,22 @@ public class ThreadLocalLogTracer implements LogTracer{
 
     @Override
     public TraceStatus begin(String message) {
-        if(traceIdHolder.get() == null){
+        TraceId traceId = getTraceId();
+        return new TraceStatus(traceId,System.currentTimeMillis(),message);
+    }
+
+    private TraceId getTraceId() {
+        TraceId savedTraceId = traceIdHolder.get();
+        if(savedTraceId == null){
             TraceId traceId = new TraceId();
             traceIdHolder.set(traceId);
         }
         else{
-            TraceId next = traceIdHolder.get().createNext();
+            TraceId next = savedTraceId.createNext();
             traceIdHolder.set(next);
         }
 
-        return new TraceStatus(traceIdHolder.get(),System.currentTimeMillis(),message);
+        return traceIdHolder.get();
     }
 
     @Override
