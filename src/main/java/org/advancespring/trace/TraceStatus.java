@@ -20,10 +20,7 @@ public class TraceStatus {
     }
 
     public String getMessage() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < this.getTraceId().getDepth(); i++) {
-            sb.append("----");
-        }
-        return String.format("%s%s",sb,message);
+
+        return message;
     }
 }

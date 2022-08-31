@@ -10,7 +10,8 @@ public class ThreadLocalLogTracer implements LogTracer{
     @Override
     public TraceStatus begin(String message) {
         TraceId traceId = getTraceId();
-        return new TraceStatus(traceId,System.currentTimeMillis(),message);
+        String indentedMessage = addIndent(traceId.getDepth(), message);
+        return new TraceStatus(traceId,System.currentTimeMillis(),indentedMessage);
     }
 
     private TraceId getTraceId() {
@@ -35,5 +36,13 @@ public class ThreadLocalLogTracer implements LogTracer{
     @Override
     public void exception(TraceStatus status, Exception e) {
 
+    }
+
+    private String addIndent(int depth,String message){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            sb.append("----");
+        }
+        return String.format("%s%s",sb,message);
     }
 }
