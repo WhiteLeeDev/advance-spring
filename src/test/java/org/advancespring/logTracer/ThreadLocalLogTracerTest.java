@@ -38,4 +38,14 @@ class ThreadLocalLogTracerTest {
         assertThat(nextStatus.getTraceId().getId()).isEqualTo(beginStatus.getTraceId().getId());
         assertThat(nextStatus.getTraceId().getDepth()).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("[positive] 출력될 로그는 depth * 4칸씩 들여쓰기 됨")
+    void test3(){
+        logTracer.begin("parent method");
+        TraceStatus child_method = logTracer.begin("child method");
+
+        assertThat(child_method.getTraceId().getDepth()).isEqualTo(1);
+        assertThat(child_method.getMessage()).hasSize("child method".length()+4);
+    }
 }
