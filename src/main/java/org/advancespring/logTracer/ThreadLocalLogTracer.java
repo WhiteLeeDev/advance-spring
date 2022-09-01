@@ -11,8 +11,7 @@ public class ThreadLocalLogTracer implements LogTracer{
     @Override
     public TraceStatus begin(String message) {
         TraceId traceId = getTraceId();
-        String indentedMessage = addIndent(traceId.getDepth(), message);
-        return new TraceStatus(traceId,System.currentTimeMillis(),indentedMessage);
+        return new TraceStatus(traceId,System.currentTimeMillis(),message);
     }
 
     private TraceId getTraceId() {
@@ -35,26 +34,36 @@ public class ThreadLocalLogTracer implements LogTracer{
         if(ObjectUtils.isEmpty(traceId))
             return new TraceStatus(null,0L,"");
 
+        releaseTraceId(traceId);
+        TraceStatus traceStatus = new TraceStatus(traceId,
+                System.currentTimeMillis(),
+                status.getMessage());
+
+        return traceStatus;
+    }
+
+    private void releaseTraceId(TraceId traceId) {
         if(traceId.isFirstDepth()){
             traceIdHolder.remove();
         }
         else{
             traceIdHolder.set(traceId.createPrevious());
         }
-        return new TraceStatus(traceId,System.currentTimeMillis(),status.getMessage());
     }
 
     @Override
     public TraceStatus exception(TraceStatus status, Exception e) {
+        TraceId traceId = traceIdHolder.get();
+        if(ObjectUtils.isEmpty(traceId))
+            return new TraceStatus(null,0L,"");
 
-        return status;
+        releaseTraceId(traceId);
+        TraceStatus traceStatus = new TraceStatus(traceId,
+                System.currentTimeMillis(),
+                status.getMessage(),e);
+
+        return traceStatus;
     }
 
-    private String addIndent(int depth,String message){
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            sb.append("----");
-        }
-        return String.format("%s%s",sb,message);
-    }
+
 }

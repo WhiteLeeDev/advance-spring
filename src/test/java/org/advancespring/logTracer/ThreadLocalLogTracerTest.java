@@ -4,10 +4,8 @@ import org.advancespring.trace.TraceId;
 import org.advancespring.trace.TraceStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 
 class ThreadLocalLogTracerTest {
@@ -46,7 +44,7 @@ class ThreadLocalLogTracerTest {
         TraceStatus child_method = logTracer.begin("child method");
 
         assertThat(child_method.getTraceId().getDepth()).isEqualTo(1);
-        assertThat(child_method.getMessage()).hasSize("child method".length()+4);
+        assertThat(child_method.getFormattedMessage()).hasSize("child method".length()+4);
     }
 
     @Test
@@ -85,10 +83,10 @@ class ThreadLocalLogTracerTest {
         TraceStatus end2 = logTracer.end(function2);
         TraceStatus end1 = logTracer.end(function1);
 
-        assertThat(function1.getMessage()).isEqualTo("function1");
-        assertThat(function2.getMessage()).isEqualTo("----function2");
-        assertThat(end2.getMessage()).isEqualTo("----function2");
-        assertThat(end1.getMessage()).isEqualTo("function1");
+        assertThat(function1.getFormattedMessage()).isEqualTo("function1");
+        assertThat(function2.getFormattedMessage()).isEqualTo("----function2");
+        assertThat(end2.getFormattedMessage()).isEqualTo("----function2");
+        assertThat(end1.getFormattedMessage()).isEqualTo("function1");
     }
 
     @Test
@@ -97,7 +95,7 @@ class ThreadLocalLogTracerTest {
         TraceStatus exception_test = logTracer.begin("exception test");
         TraceStatus exception_log = logTracer.exception(exception_test,new Exception()); //발생한 실제 exception을 어떻게 보여줄지는 고민되는 사항
 
-        assertThat(exception_log.getMessage()).isEqualTo("!!exception test");
+        assertThat(exception_log.getFormattedMessage()).isEqualTo("exception test");
     }
 
     @Test
@@ -109,7 +107,7 @@ class ThreadLocalLogTracerTest {
         TraceStatus exception_log2 = logTracer.exception(exception_test2,new Exception());
         TraceStatus exception_log1 = logTracer.exception(exception_test,new Exception());
 
-        assertThat(exception_log2.getMessage()).isEqualTo("!!■■■■exception test");
-        assertThat(exception_log1.getMessage()).isEqualTo("!!exception test");
+        assertThat(exception_log2.getFormattedMessage()).isEqualTo("■■■■exception test");
+        assertThat(exception_log1.getFormattedMessage()).isEqualTo("exception test");
     }
 }

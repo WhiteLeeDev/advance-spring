@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class TraceStatusTest {
 
@@ -17,7 +16,7 @@ class TraceStatusTest {
 
         assertThat(traceStatus.getTraceId().getId()).hasSize(8);
         assertThat(traceStatus.getStartMs()).isPositive();
-        assertThat(traceStatus.getMessage()).isEqualTo("객체생성테스트");
+        assertThat(traceStatus.getFormattedMessage()).isEqualTo("객체생성테스트");
     }
 
     @Test
@@ -26,15 +25,6 @@ class TraceStatusTest {
         TraceId id = new TraceId();
         TraceStatus status = new TraceStatus(id, System.currentTimeMillis(), "원본");
 
-        assertThat(status.getMessage()).isEqualTo("원본");
-    }
-
-    @Test
-    @DisplayName("[positive] message 앞에 내용을 자유롭게 추가할 수 있음")
-    void test3() {
-        TraceId id = new TraceId();
-        TraceStatus status = new TraceStatus(id, System.currentTimeMillis(), "원본");
-        status.setLeftPadding("!!");
-        assertThat(status.getMessage()).isEqualTo("!!원본");
+        assertThat(status.getFormattedMessage()).isEqualTo("원본");
     }
 }
