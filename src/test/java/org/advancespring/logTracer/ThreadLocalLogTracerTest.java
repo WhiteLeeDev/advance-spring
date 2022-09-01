@@ -89,7 +89,27 @@ class ThreadLocalLogTracerTest {
         assertThat(function2.getMessage()).isEqualTo("----function2");
         assertThat(end2.getMessage()).isEqualTo("----function2");
         assertThat(end1.getMessage()).isEqualTo("function1");
+    }
 
+    @Test
+    @DisplayName("[positive] exception발생 시 message는 exception 포맷으로 변경되어야 함")
+    void test9(){
+        TraceStatus exception_test = logTracer.begin("exception test");
+        TraceStatus exception_log = logTracer.exception(exception_test,new Exception()); //발생한 실제 exception을 어떻게 보여줄지는 고민되는 사항
 
+        assertThat(exception_log.getMessage()).isEqualTo("!!exception test");
+    }
+
+    @Test
+    @DisplayName("[positive] depth가 1이상일 때 exception발생 시 message는 exception 포맷으로 변경되어야 함")
+    void test10(){
+
+        TraceStatus exception_test = logTracer.begin("exception test");
+        TraceStatus exception_test2 = logTracer.begin("exception test");
+        TraceStatus exception_log2 = logTracer.exception(exception_test2,new Exception());
+        TraceStatus exception_log1 = logTracer.exception(exception_test,new Exception());
+
+        assertThat(exception_log2.getMessage()).isEqualTo("!!■■■■exception test");
+        assertThat(exception_log1.getMessage()).isEqualTo("!!exception test");
     }
 }

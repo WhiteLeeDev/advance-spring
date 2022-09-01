@@ -7,5 +7,5 @@ public interface LogTracer {
 
     TraceStatus end(TraceStatus status);
 
-    void exception(TraceStatus status,Exception e);
+    TraceStatus exception(TraceStatus status, Exception e);
 }

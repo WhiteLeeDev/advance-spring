@@ -45,8 +45,9 @@ public class ThreadLocalLogTracer implements LogTracer{
     }
 
     @Override
-    public void exception(TraceStatus status, Exception e) {
+    public TraceStatus exception(TraceStatus status, Exception e) {
 
+        return status;
     }
 
     private String addIndent(int depth,String message){
