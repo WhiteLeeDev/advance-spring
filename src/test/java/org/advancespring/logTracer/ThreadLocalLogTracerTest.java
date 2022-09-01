@@ -48,4 +48,32 @@ class ThreadLocalLogTracerTest {
         assertThat(child_method.getTraceId().getDepth()).isEqualTo(1);
         assertThat(child_method.getMessage()).hasSize("child method".length()+4);
     }
+
+    @Test
+    @DisplayName("[positive] begin 후 end를 하면 수행 시간이 출력됨")
+    void test4(){
+        TraceStatus parent_method = logTracer.begin("parent method");
+        logTracer.end(parent_method);
+        //로그 검증은 어떻게 하지?
+    }
+
+    @Test
+    @DisplayName("[positive] top level까지 end가 끝나면 TraceIdHolder가 초기화 됨")
+    void test6(){
+        TraceStatus parent_method = logTracer.begin("parent method");
+        logTracer.end(parent_method);
+
+        ThreadLocal<TraceId> traceIdHolder = (ThreadLocal<TraceId>)getField(logTracer, "traceIdHolder");
+
+        assertThat(traceIdHolder.get()).isNull();
+    }
+
+    @Test
+    @DisplayName("[positive] end를 할 때도 TraceStatus를 반환함")
+    void test7(){
+        TraceStatus parent_method = logTracer.begin("parent method");
+        TraceStatus end_log = logTracer.end(parent_method);
+
+        assertThat(end_log).isNotNull();
+    }
 }

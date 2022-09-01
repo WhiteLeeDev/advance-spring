@@ -5,7 +5,7 @@ import org.advancespring.trace.TraceStatus;
 public interface LogTracer {
     TraceStatus begin(String message);
 
-    void end(TraceStatus status);
+    TraceStatus end(TraceStatus status);
 
     void exception(TraceStatus status,Exception e);
 }

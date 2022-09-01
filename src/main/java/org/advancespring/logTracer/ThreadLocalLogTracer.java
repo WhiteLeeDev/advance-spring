@@ -29,8 +29,11 @@ public class ThreadLocalLogTracer implements LogTracer{
     }
 
     @Override
-    public void end(TraceStatus status) {
+    public TraceStatus end(TraceStatus status) {
 
+
+
+        return status;
     }
 
     @Override
