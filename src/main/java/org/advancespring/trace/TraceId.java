@@ -35,4 +35,8 @@ public class TraceId {
     public TraceId createPrevious() {
         return new TraceId(this.id,this.depth -1);
     }
+
+    public boolean isFirstDepth(){
+        return this.depth == 0;
+    }
 }
