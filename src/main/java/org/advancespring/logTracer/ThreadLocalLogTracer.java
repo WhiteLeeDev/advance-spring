@@ -13,6 +13,14 @@ public class ThreadLocalLogTracer implements LogTracer{
         TraceId traceId = getTraceId();
         return new TraceStatus(traceId,System.currentTimeMillis(),message);
     }
+    @Override
+    public TraceStatus end(TraceStatus status) {
+        return complete(status,null);
+    }
+    @Override
+    public TraceStatus exception(TraceStatus status, Exception e) {
+        return complete(status,e);
+    }
 
     private TraceId getTraceId() {
         TraceId savedTraceId = traceIdHolder.get();
@@ -28,16 +36,15 @@ public class ThreadLocalLogTracer implements LogTracer{
         return traceIdHolder.get();
     }
 
-    @Override
-    public TraceStatus end(TraceStatus status) {
+    private TraceStatus complete(TraceStatus status, Exception o) {
         TraceId traceId = traceIdHolder.get();
         if(ObjectUtils.isEmpty(traceId))
-            return new TraceStatus(null,0L,"");
+            return new TraceStatus(null, 0L, "");
 
         releaseTraceId(traceId);
         TraceStatus traceStatus = new TraceStatus(traceId,
                 System.currentTimeMillis(),
-                status.getMessage());
+                status.getMessage(),o);
 
         return traceStatus;
     }
@@ -50,20 +57,4 @@ public class ThreadLocalLogTracer implements LogTracer{
             traceIdHolder.set(traceId.createPrevious());
         }
     }
-
-    @Override
-    public TraceStatus exception(TraceStatus status, Exception e) {
-        TraceId traceId = traceIdHolder.get();
-        if(ObjectUtils.isEmpty(traceId))
-            return new TraceStatus(null,0L,"");
-
-        releaseTraceId(traceId);
-        TraceStatus traceStatus = new TraceStatus(traceId,
-                System.currentTimeMillis(),
-                status.getMessage(),e);
-
-        return traceStatus;
-    }
-
-
 }
