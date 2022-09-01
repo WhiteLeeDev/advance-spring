@@ -28,4 +28,13 @@ class TraceStatusTest {
 
         assertThat(status.getMessage()).isEqualTo("원본");
     }
+
+    @Test
+    @DisplayName("[positive] message 앞에 내용을 자유롭게 추가할 수 있음")
+    void test3() {
+        TraceId id = new TraceId();
+        TraceStatus status = new TraceStatus(id, System.currentTimeMillis(), "원본");
+        status.setLeftPadding("!!");
+        assertThat(status.getMessage()).isEqualTo("!!원본");
+    }
 }
