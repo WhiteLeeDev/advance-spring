@@ -2,6 +2,7 @@ package org.advancespring.logTracer;
 
 import org.advancespring.trace.TraceId;
 import org.advancespring.trace.TraceStatus;
+import org.springframework.util.ObjectUtils;
 
 public class ThreadLocalLogTracer implements LogTracer{
 
@@ -31,13 +32,14 @@ public class ThreadLocalLogTracer implements LogTracer{
     @Override
     public TraceStatus end(TraceStatus status) {
         TraceId traceId = traceIdHolder.get();
-        if(traceId.getDepth() == 0){
+        if(ObjectUtils.isEmpty(traceId))
+            return new TraceStatus(null,0L,"");
+
+        if(traceId.isFirstDepth()){
             traceIdHolder.remove();
         }
         else{
-            TraceId previous = traceId.createPrevious();
-            traceIdHolder.set(previous);
-
+            traceIdHolder.set(traceId.createPrevious());
         }
         return new TraceStatus(traceId,System.currentTimeMillis(),status.getMessage());
     }
