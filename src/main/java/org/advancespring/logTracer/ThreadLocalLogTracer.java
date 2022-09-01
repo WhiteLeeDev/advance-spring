@@ -30,10 +30,16 @@ public class ThreadLocalLogTracer implements LogTracer{
 
     @Override
     public TraceStatus end(TraceStatus status) {
+        TraceId traceId = traceIdHolder.get();
+        if(traceId.getDepth() == 0){
+            traceIdHolder.remove();
+        }
+        else{
+            TraceId previous = traceId.createPrevious();
+            traceIdHolder.set(previous);
 
-
-
-        return status;
+        }
+        return new TraceStatus(traceId,System.currentTimeMillis(),status.getMessage());
     }
 
     @Override

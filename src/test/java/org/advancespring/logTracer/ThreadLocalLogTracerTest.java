@@ -76,4 +76,20 @@ class ThreadLocalLogTracerTest {
 
         assertThat(end_log).isNotNull();
     }
+
+    @Test
+    @DisplayName("[positive] 두단계로 log 출력이 되어야 함")
+    void test8(){
+        TraceStatus function1 = logTracer.begin("function1");
+        TraceStatus function2 = logTracer.begin("function2");
+        TraceStatus end2 = logTracer.end(function2);
+        TraceStatus end1 = logTracer.end(function1);
+
+        assertThat(function1.getMessage()).isEqualTo("function1");
+        assertThat(function2.getMessage()).isEqualTo("----function2");
+        assertThat(end2.getMessage()).isEqualTo("----function2");
+        assertThat(end1.getMessage()).isEqualTo("function1");
+
+
+    }
 }
